@@ -35,9 +35,18 @@ def scrape(url):
 
 def write2file(Table, type):
     with open(f'result.{type}', 'a') as file:
+        file.write('Country;Capital;Population;Area (km2)\n')
         for row in Table:
             file.write(row+'\n')
     file.close()
+def correct_data(Table):
+    new_data = []
+    for row in Table:
+        i = row.replace('Capital: ', '')
+        i = i.replace('Population: ', '')
+        i = i.replace('Area (km2): ', '')
+        new_data.append(i)
+    return new_data
 if __name__ == '__main__':
-    data = scrape(url)
+    data = correct_data(scrape(url))
     write2file(data, 'csv')
