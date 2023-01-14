@@ -23,11 +23,21 @@ def download(url, num_retries=3):
     return html
 
 def scrape(url):
+    scraped_data = []
     html = download(url)
     tree = fromstring(html)
-    td = tree.xpath('//div[@class="row"]')[3:-1]
-    for i in td:
-        info = i.text_content().strip()
-        print(info)
+    country_names = tree.xpath('//div[@class="row"]/div[@class="col-md-4 country"]/h3')[3:-1]
+    td = tree.xpath('//div[@class="row"]/div[@class="col-md-4 country"]/div')[3:-1]
+    for i in range(len(td)):
+        info = td[i].text_content()
+        scraped_data.append(country_names[i].text_content().strip()+';'+ info.strip().replace("\n                            ",';'))
+    return scraped_data
 
-print(scrape(url))
+def write2file(Table, type):
+    with open(f'result.{type}', 'a') as file:
+        for row in Table:
+            file.write(row+'\n')
+    file.close()
+if __name__ == '__main__':
+    data = scrape(url)
+    write2file(data, 'csv')
